@@ -1,0 +1,42 @@
+final List<Map<String, dynamic>> drinks = [
+  {
+    'id': 1,
+    'name': 'Coca-Cola',
+    'price': 2.99,
+    'stock': 100,
+    'image': 'https://www.coca-colaproductfacts.com/content/dam/cokeplus/coke-plus/en/products/coca-cola-original-taste/coca-cola-original-taste-12oz-can.png',
+    'category': 'Soda',
+  },
+  {
+    'id': 2,
+    'name': 'Sprite',
+    'price': 2.99,
+    'stock': 100,
+    'image': 'https://www.coca-colaproductfacts.com/content/dam/cokeplus/coke-plus/en/products/sprite/sprite-12oz-can.png',
+    'category': 'Soda',
+  },
+  {
+    'id': 3,
+    'name': 'Fanta',
+    'price': 2.99,
+    'stock': 100,
+    'image': 'https://www.coca-colaproductfacts.com/content/dam/cokeplus/coke-plus/en/products/fanta-orange/fanta-orange-12oz-can.png',
+    'category': 'Soda',
+  },
+  {
+    'id': 4,
+    'name': 'Hawai Punch',
+    'price': 3.49,
+    'stock': 50,
+    'image': 'https://www.hawaiianpunch.com/content/dam/hawaiianpunch/en/products/hawaiian-punch-fruit-junky/hawaiian-punch-fruit-junky-12oz-can.png',
+    'category': 'Juice',
+  },
+  {
+    'id': 5,
+    'name': 'Minute Maid',
+    'price': 3.99,
+    'stock': 75,
+    'image': 'https://www.minutemaid.com/content/dam/minutemaid/en/products/minute-maid-orange-juice/minute-maid-orange-juice-12oz-can.png',
+    'category': 'Juice',
+  },
+]; 
