@@ -31,11 +31,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
         // Find user in static data
         final user = users.firstWhere(
-          (u) => u.username == _usernameController.text,
+          (u) => u.email == _usernameController.text,
           orElse: () => User(
-            username: _usernameController.text,
-            role: UserRole.seller,
+            id: 'new',
             name: 'New Seller',
+            email: _usernameController.text,
+            role: UserRole.seller,
           ),
         );
 
@@ -57,13 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       });
     }
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    super.dispose();
   }
 
   @override
@@ -132,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'Demo Accounts:\nadmin - Admin Dashboard\nseller1/seller2 - Seller Dashboard',
+                  'Demo Accounts:\nadmin@example.com - Admin Dashboard\njohn@example.com/jane@example.com - Seller Dashboard',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),
@@ -142,5 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 } 

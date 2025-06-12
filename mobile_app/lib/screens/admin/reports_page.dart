@@ -22,207 +22,258 @@ class _ReportsPageState extends State<ReportsPage> {
     final filteredSales = _getFilteredSales();
 
     return SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Filters
-                    Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Filters',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<String>(
-                              decoration: const InputDecoration(
-                                labelText: 'Seller',
-                                border: OutlineInputBorder(),
-                              ),
-                              value: _selectedSeller,
-                              items: [
-                                const DropdownMenuItem(
-                                  value: null,
-                                  child: Text('All Sellers'),
-                                ),
-                                ...sellers.map((seller) => DropdownMenuItem(
-                                      value: seller.name,
-                                      child: Text(seller.name),
-                                    )),
-                              ],
-                              onChanged: (value) {
-                                setState(() {
-                                  _selectedSeller = value;
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton.icon(
-                                    onPressed: () => _selectDateRange(context),
-                                    icon: const Icon(Icons.calendar_today),
-                                    label: Text(
-                                      '${_startDate.toString().split(' ')[0]} - ${_endDate.toString().split(' ')[0]}',
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                DropdownButton<String>(
-                                  value: _selectedChartType,
-                                  items: const [
-                                    DropdownMenuItem(
-                                      value: 'Daily',
-                                      child: Text('Daily'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'Weekly',
-                                      child: Text('Weekly'),
-                                    ),
-                                    DropdownMenuItem(
-                                      value: 'Monthly',
-                                      child: Text('Monthly'),
-                                    ),
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _selectedChartType = value!;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Filters
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Filters',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Summary Cards
-                    GridView.count(
-                      crossAxisCount: 2,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      mainAxisSpacing: 16,
-                      crossAxisSpacing: 16,
-                      childAspectRatio: 1.5,
-                      children: [
-                        _buildSummaryCard(
-                          'Total Sales',
-                          '\$${_calculateTotalSales(filteredSales).toStringAsFixed(2)}',
-                          Icons.attach_money,
-                          Colors.green,
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<String>(
+                        decoration: const InputDecoration(
+                          labelText: 'Seller',
+                          border: OutlineInputBorder(),
                         ),
-                        _buildSummaryCard(
-                          'Number of Sales',
-                          filteredSales.length.toString(),
-                          Icons.receipt,
-                          Colors.blue,
-                        ),
-                        _buildSummaryCard(
-                          'Average Sale',
-                          '\$${_calculateAverageSale(filteredSales).toStringAsFixed(2)}',
-                          Icons.trending_up,
-                          Colors.orange,
-                        ),
-                        _buildSummaryCard(
-                          'Top Product',
-                          _getTopProduct(filteredSales),
-                          Icons.star,
-                          Colors.purple,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Sales Chart
-                    const Text(
-                      'Sales Trend',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                        value: _selectedSeller,
+                        items: [
+                          const DropdownMenuItem(
+                            value: null,
+                            child: Text('All Sellers'),
+                          ),
+                          ...sellers.map((seller) => DropdownMenuItem(
+                                value: seller.name,
+                                child: Text(seller.name),
+                              )),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedSeller = value;
+                          });
+                        },
                       ),
-                    ),
-                    const SizedBox(height: 16),
-                    SizedBox(
-                      height: 200,
-                      child: LineChart(
-                        LineChartData(
-                          gridData: const FlGridData(show: false),
-                          titlesData: const FlTitlesData(show: false),
-                          borderData: FlBorderData(show: false),
-                          lineBarsData: [
-                            LineChartBarData(
-                              spots: _getChartData(filteredSales),
-                              isCurved: true,
-                              color: Colors.blue,
-                              barWidth: 3,
-                              dotData: const FlDotData(show: false),
-                              belowBarData: BarAreaData(
-                                show: true,
-                                color: Colors.blue.withOpacity(0.1),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Sales List
-                    const Text(
-                      'Sales Details',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: filteredSales.length,
-                      itemBuilder: (context, index) {
-                        final sale = filteredSales[index];
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          child: ListTile(
-                            leading: const CircleAvatar(
-                              child: Icon(Icons.receipt),
-                            ),
-                            title: Text('Sale by ${sale['seller']}'),
-                            subtitle: Text(sale['date']),
-                            trailing: Text(
-                              '\$${sale['amount'].toStringAsFixed(2)}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton.icon(
+                              onPressed: () => _selectDateRange(context),
+                              icon: const Icon(Icons.calendar_today),
+                              label: Text(
+                                '${_startDate.toString().split(' ')[0]} - ${_endDate.toString().split(' ')[0]}',
                               ),
                             ),
                           ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                  ],
+                          const SizedBox(width: 16),
+                          DropdownButton<String>(
+                            value: _selectedChartType,
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'Daily',
+                                child: Text('Daily'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'Weekly',
+                                child: Text('Weekly'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'Monthly',
+                                child: Text('Monthly'),
+                              ),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedChartType = value!;
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(height: 24),
+
+              // Summary Cards
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 1.5,
+                children: [
+                  _buildSummaryCard(
+                    'Total Sales',
+                    '\$${_calculateTotalSales(filteredSales).toStringAsFixed(2)}',
+                    Icons.attach_money,
+                    Colors.green,
+                  ),
+                  _buildSummaryCard(
+                    'Number of Sales',
+                    filteredSales.length.toString(),
+                    Icons.receipt,
+                    Colors.blue,
+                  ),
+                  _buildSummaryCard(
+                    'Average Sale',
+                    '\$${_calculateAverageSale(filteredSales).toStringAsFixed(2)}',
+                    Icons.trending_up,
+                    Colors.orange,
+                  ),
+                  _buildSummaryCard(
+                    'Top Product',
+                    _getTopProduct(filteredSales),
+                    Icons.star,
+                    Colors.purple,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              // Sales Chart
+              const Text(
+                'Sales Trend',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
+                height: 200,
+                child: LineChart(
+                  LineChartData(
+                    gridData: const FlGridData(show: false),
+                    titlesData: const FlTitlesData(show: false),
+                    borderData: FlBorderData(show: false),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: _getChartData(filteredSales),
+                        isCurved: true,
+                        color: Colors.blue,
+                        barWidth: 3,
+                        dotData: const FlDotData(show: false),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          color: Colors.blue.withOpacity(0.1),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+
+              // Sales List
+              const Text(
+                'Sales Details',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: filteredSales.length,
+                itemBuilder: (context, index) {
+                  final sale = filteredSales[index];
+                  return Card(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: ExpansionTile(
+                      leading: const CircleAvatar(
+                        child: Icon(Icons.receipt),
+                      ),
+                      title: Text(
+                        'Sale by ${sale['seller']}',
+                        style: const TextStyle(fontSize: 14),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            sale['date'],
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          Text(
+                            'Customer: ${sale['customer']}',
+                            style: const TextStyle(fontSize: 12),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            'Total: \$${sale['amount'].toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Products:',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              ...sale['products'].map<Widget>((product) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          '${product['name']} x${product['quantity']}',
+                                          style: const TextStyle(fontSize: 12),
+                                        ),
+                                      ),
+                                      Text(
+                                        '\$${(product['price'] * product['quantity']).toStringAsFixed(2)}',
+                                        style: const TextStyle(fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -246,8 +297,17 @@ class _ReportsPageState extends State<ReportsPage> {
   }
 
   String _getTopProduct(List<Map<String, dynamic>> sales) {
-    // In a real app, this would analyze the actual products sold
-    return 'Product 1';
+    final productCounts = <String, int>{};
+    for (var sale in sales) {
+      for (var product in sale['products']) {
+        final name = product['name'] as String;
+        productCounts[name] = (productCounts[name] ?? 0) + (product['quantity'] as int);
+      }
+    }
+    if (productCounts.isEmpty) return 'N/A';
+    return productCounts.entries
+        .reduce((a, b) => a.value > b.value ? a : b)
+        .key;
   }
 
   List<FlSpot> _getChartData(List<Map<String, dynamic>> sales) {
@@ -266,26 +326,33 @@ class _ReportsPageState extends State<ReportsPage> {
     return Card(
       elevation: 4,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: color, size: 32),
+            Icon(icon, color: color, size: 24),
             const SizedBox(height: 8),
             Text(
               title,
               style: const TextStyle(
-                fontSize: 14,
+                fontSize: 12,
                 color: Colors.grey,
               ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: color,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ],
